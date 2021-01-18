@@ -1,32 +1,56 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
+  <div class="app">
     <router-view/>
+    <ConfirmModal title="Undo?" v-show="showModalUndo" @closed="confirmUndo" confirmBtnTitle="Yes"/>
   </div>
 </template>
 
+<script>
+import ConfirmModal from '@/components/ConfirmModal.vue'
+export default {
+  components: {
+    ConfirmModal
+  },
+  data () {
+    return {
+      showModalUndo: false
+    }
+  },
+  mounted () {
+    document.addEventListener('keyup', this.keyupHandler)
+  },
+  destroyed () {
+    document.removeEventListener('keyup', this.keyupHandler)
+  },
+  methods: {
+    keyupHandler (event) {
+      if (event.ctrlKey && event.code === 'KeyZ') {
+        this.showModalUndo = true
+      }
+    },
+    confirmUndo (confirm) {
+      if (confirm) this.undo()
+      this.showModalUndo = false
+    }
+  }
+}
+</script>
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+.app{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  font-family: sans-serif;
 }
-
-#nav {
-  padding: 30px;
+.btn{
+  border-radius: 3px;
+  padding: 5px;
 }
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
+.btn:hover{
+  background-color: #ccc;
 }
-
-#nav a.router-link-exact-active {
-  color: #42b983;
+.hint{
+  color: #ccf;
 }
 </style>
